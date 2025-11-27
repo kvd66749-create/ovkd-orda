@@ -46,6 +46,18 @@ create table if not exists public.site_content (
   updated_at timestamp with time zone default now()
 );
 
+-- Board protocols
+create table if not exists public.board_protocols (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  title text not null,
+  description text,
+  meeting_date date,
+  pdf_url text,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
+
 -- ========================================
 -- 2️⃣ RLS қосу
 -- ========================================
@@ -53,6 +65,7 @@ alter table public.news enable row level security;
 alter table public.services enable row level security;
 alter table public.doctors enable row level security;
 alter table public.site_content enable row level security;
+alter table public.board_protocols enable row level security;
 
 -- ========================================
 -- 3️⃣ Public оқуға саясаттар (барлығы SELECT үшін)
@@ -61,6 +74,7 @@ create policy "Public read news" on public.news for select using (true);
 create policy "Public read services" on public.services for select using (true);
 create policy "Public read doctors" on public.doctors for select using (true);
 create policy "Public read site_content" on public.site_content for select using (true);
+create policy "Public read board protocols" on public.board_protocols for select using (true);
 
 -- ========================================
 -- 4️⃣ Индекстер (оқу жылдамдығы үшін)
@@ -68,3 +82,4 @@ create policy "Public read site_content" on public.site_content for select using
 create index if not exists news_published_date_idx on public.news(published_date desc);
 create index if not exists services_category_idx on public.services(category);
 create index if not exists doctors_sort_order_idx on public.doctors(sort_order);
+create index if not exists board_protocols_meeting_date_idx on public.board_protocols(meeting_date desc);
